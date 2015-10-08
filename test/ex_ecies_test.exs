@@ -3,11 +3,10 @@ defmodule ExEciesTest do
   doctest ExEcies
 
   test "the truth" do
-  	{pub, priv} = :crypto.generate_key(:ecdh, :secp521r1)
-    IO.puts(Base.encode16(pub))
-    IO.puts(Base.encode16(priv))
-  	x = ExEcies.encrypt(Base.encode16(pub),"this is a laskdlaksdlaskdlaskldkfrecking test")
-    IO.puts Base.encode16(x)
-    "this is a frecking test" = ExEcies.decrypt(Base.encode16(priv), "asd")
+    pub = "0200AA69CB486704321212EF0A02715FE7F9BE1855AF5FAA63FD4EC198B04E35AD3C955D02A9E2BD36FE9136E4C568975C2DF23E9BE12A5160A082D111B4744D1C6E13"
+    priv = "46CEDEBFC16FE585FA7F1754606E108169CB752DBF1F93A8E4E18B63B2F250BD06E82444DB575DF78758F8B82B779A26419809EE1A195870232436EA8E244ABF35"
+  	x = ExEcies.encrypt(pub, "this is test")
+  	File.write! "kkk", x
+  	IO.puts ExEcies.decrypt(priv, x)
   end
 end

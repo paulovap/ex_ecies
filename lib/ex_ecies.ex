@@ -3,8 +3,7 @@ defmodule ExEcies do
 
   def init() do
     :ok = :erlang.load_nif("./priv/lib_elixir_ecies", 0)
-    :ok = init_nif()
-    :ok
+    init_nif()
   end
 
   def encrypt(pubKey, data) do
