@@ -165,7 +165,7 @@ EC_KEY * ecies_key_create_public_octets(unsigned char *octets, size_t length) {
 	return key;
 }
 
-EC_KEY * ecies_key_create_public_hex(char *hex) {
+EC_KEY * ecies_key_create_public_hex(const char *hex) {
 
 	EC_GROUP *group;
 	EC_KEY *key = NULL;
@@ -249,7 +249,7 @@ char * ecies_key_public_get_hex(EC_KEY *key) {
 	return hex;
 }
 
-EC_KEY * ecies_key_create_private_hex(char *hex) {
+EC_KEY * ecies_key_create_private_hex(const char *hex) {
 
 	EC_GROUP *group;
 	BIGNUM *bn = NULL;
