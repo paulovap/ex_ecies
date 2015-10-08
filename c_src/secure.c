@@ -37,18 +37,18 @@ uint64_t secure_total_length(secure_t *cryptex) {
 	return sizeof(secure_head_t) + (head->length.key + head->length.mac + head->length.body);
 }
 
-void * secure_key_data(secure_t *cryptex) {
-	return (char *)cryptex + sizeof(secure_head_t);
+unsigned char* secure_key_data(secure_t *cryptex) {
+	return (unsigned char *)cryptex + sizeof(secure_head_t);
 }
 
-void * secure_mac_data(secure_t *cryptex) {
+unsigned char* secure_mac_data(secure_t *cryptex) {
 	secure_head_t *head = (secure_head_t *)cryptex;
-	return (char *)cryptex + (sizeof(secure_head_t) + head->length.key);
+	return (unsigned char *)cryptex + (sizeof(secure_head_t) + head->length.key);
 }
 
-void * secure_body_data(secure_t *cryptex) {
+unsigned char* secure_body_data(secure_t *cryptex) {
 	secure_head_t *head = (secure_head_t *)cryptex;
-	return (char *)cryptex + (sizeof(secure_head_t) + head->length.key + head->length.mac);
+	return (unsigned char *)cryptex + (sizeof(secure_head_t) + head->length.key + head->length.mac);
 }
 
 void * secure_alloc(uint64_t key, uint64_t mac, uint64_t orig, uint64_t body) {

@@ -11,6 +11,8 @@
 
 static ERL_NIF_TERM init_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
+    (void)argc;
+    (void)argv;
     SSL_library_init();
     SSL_load_error_strings();
     ecies_group_init();
@@ -30,12 +32,14 @@ static ERL_NIF_TERM encrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     if(!enif_inspect_binary(env, argv[0], &key)){
         return enif_make_badarg(env);
     }
+    key.data[key.size] = '\0';
 
     if(!enif_inspect_binary(env, argv[1], &data)){
         return enif_make_badarg(env);
     }
+    data.data[data.size] = '\0';
 
-	if (!(out_secure = ecies_encrypt((char *)key.data, data.data, data.size))) {
+	if (!(out_secure = ecies_encrypt((const char*)key.data, data.data, data.size))) {
 		return enif_make_badarg(env);
 	}
 
@@ -46,7 +50,7 @@ static ERL_NIF_TERM encrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
 		return enif_make_badarg(env);
 	}
 
-    strncpy((char*)result.data, out_secure, length);
+    strncpy((char*)result.data, (const char*)out_secure, length);
     secure_free(out_secure);
     return enif_make_binary(env, &result);
 }
@@ -57,7 +61,7 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     ErlNifBinary data;
     ErlNifBinary result;
     size_t length;
-    char *output;
+    unsigned char *output;
 
     if (argc != 2) {
         return enif_make_badarg(env);
@@ -66,12 +70,17 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     if(!enif_inspect_binary(env, argv[0], &key)){
         return enif_make_badarg(env);
     }
+    key.data[key.size] = '\0';
+
+
 
     if(!enif_inspect_binary(env, argv[1], &data)){
         return enif_make_badarg(env);
     }
+  data.data[data.size] = '\0';
 
-    if(!(output = ecies_decrypt((char *)key.data, (secure_t*)data.data, &length))) {
+
+    if(!(output = ecies_decrypt((const char*)key.data, (secure_t*)data.data, &length))) {
     	return enif_make_badarg(env);
     }
 
@@ -80,16 +89,16 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
 		return enif_make_badarg(env);
 	}
 
-    strncpy((char*)result.data, output, length);
+    strncpy((char*)result.data, (char*)output, length);
     free(output);
-    
+
     return enif_make_binary(env, &result);
 }
 static ErlNifFunc nif_funcs[] =
 {
-  {"init_nif", 0, init_nif},
-  {"encrypt_nif", 2, encrypt_nif},
-  {"decrypt_nif", 2, decrypt_nif}
+  {"init_nif", 0, init_nif, 0},
+  {"encrypt_nif", 2, encrypt_nif, 0},
+  {"decrypt_nif", 2, decrypt_nif, 0}
 };
 
 ERL_NIF_INIT(Elixir.ExEcies, nif_funcs,NULL,NULL,NULL,NULL)

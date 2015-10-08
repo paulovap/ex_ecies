@@ -22,9 +22,8 @@ void * ecies_key_derivation(const void *input, size_t ilen, void *output, size_t
 	return SHA512(input, ilen, output);
 }
 
-secure_t * ecies_encrypt(char *key, unsigned char *data, size_t length) {
-
-	void *body;
+secure_t * ecies_encrypt(const char *key, unsigned char *data, size_t length) {
+	unsigned char* body;
 	HMAC_CTX hmac;
 	int body_length;
 	secure_t *cryptex;
@@ -42,7 +41,7 @@ secure_t * ecies_encrypt(char *key, unsigned char *data, size_t length) {
 
 	/* Make sure we are generating enough key material for the symmetric ciphers. */
 	if ((key_length = EVP_CIPHER_key_length(ECIES_CIPHER)) * 2 > SHA512_DIGEST_LENGTH) {
-		printf("The key derivation method will not produce enough envelope key material for the chosen ciphers. {envelope = %i / required = %zu}", SHA512_DIGEST_LENGTH / 8,
+		printf("The key derivation method will not produce enough envelope key material for the chosen ciphers. {envelope = %i / required = %lu}", SHA512_DIGEST_LENGTH / 8,
 				(key_length * 2) / 8);
 		return NULL;
 	}
@@ -72,7 +71,7 @@ secure_t * ecies_encrypt(char *key, unsigned char *data, size_t length) {
 	/* Determine the envelope and block lengths so we can allocate a buffer for the result. */
 	else if ((block_length = EVP_CIPHER_block_size(ECIES_CIPHER)) == 0 || block_length > EVP_MAX_BLOCK_LENGTH || (envelope_length = EC_POINT_point2oct(EC_KEY_get0_group(
 			ephemeral), EC_KEY_get0_public_key(ephemeral), POINT_CONVERSION_COMPRESSED, NULL, 0, NULL)) == 0) {
-		printf("Invalid block or envelope length. {block = %zu / envelope = %zu}\n", block_length, envelope_length);
+		printf("Invalid block or envelope length. {block = %lu / envelope = %lu}\n", block_length, envelope_length);
 		EC_KEY_free(ephemeral);
 		EC_KEY_free(user);
 		return NULL;
@@ -118,7 +117,7 @@ secure_t * ecies_encrypt(char *key, unsigned char *data, size_t length) {
 	}
 
 	/* Check whether all of the data was encrypted. If they don't match up, we either have a partial block remaining, or an error occurred. */
-	else if (body_length != length) {
+	else if (body_length != (int)length) {
 
 		/* Make sure all that remains is a partial block, and their wasn't an error.*/
 		if (length - body_length >= block_length) {
@@ -187,7 +186,7 @@ secure_t * ecies_encrypt(char *key, unsigned char *data, size_t length) {
 	return cryptex;
 }
 
-unsigned char * ecies_decrypt(char *key, secure_t *cryptex, size_t *length) {
+unsigned char * ecies_decrypt(const char *key, secure_t *cryptex, size_t *length) {
 
 	HMAC_CTX hmac;
 	size_t key_length;
@@ -205,7 +204,7 @@ unsigned char * ecies_decrypt(char *key, secure_t *cryptex, size_t *length) {
 
 	/* Make sure we are generating enough key material for the symmetric ciphers. */
 	else if ((key_length = EVP_CIPHER_key_length(ECIES_CIPHER)) * 2 > SHA512_DIGEST_LENGTH) {
-		printf("The key derivation method will not produce enough envelope key material for the chosen ciphers. {envelope = %i / required = %zu}", SHA512_DIGEST_LENGTH / 8,
+		printf("The key derivation method will not produce enough envelope key material for the chosen ciphers. {envelope = %i / required = %lu}", SHA512_DIGEST_LENGTH / 8,
 				(key_length * 2) / 8);
 		return NULL;
 	}
