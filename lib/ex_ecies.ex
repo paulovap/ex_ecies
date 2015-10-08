@@ -2,7 +2,8 @@ defmodule ExEcies do
 	@on_load :init
 
   def init() do
-    :erlang.load_nif("./priv/lib_elixir_ecies", 0)
+    :ok = :erlang.load_nif("./priv/lib_elixir_ecies", 0)
+    :ok = init_nif()
     :ok
   end
 
@@ -12,6 +13,10 @@ defmodule ExEcies do
 
   def decrypt(privKey, data) do
     decrypt_nif(privKey, data)
+  end
+
+  defp init_nif() do
+  	"NIF library not loaded"
   end
 
   defp encrypt_nif(_, _) do
