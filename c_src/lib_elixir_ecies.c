@@ -76,10 +76,14 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     }
 
     if (!enif_alloc_binary(length, &result)){
-		secure_free(out_secure);
+		free(output);
 		return enif_make_badarg(env);
 	}
-    return enif_make_string(env, "Hello world!", ERL_NIF_LATIN1);
+
+    strncpy((char*)result.data, output, length);
+    free(output);
+    
+    return enif_make_binary(env, &result);
 }
 static ErlNifFunc nif_funcs[] =
 {
