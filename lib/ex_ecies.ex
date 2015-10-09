@@ -6,6 +6,11 @@ defmodule ExEcies do
     init_nif()
   end
 
+  def generate_key() do
+    {pub, priv} = :crypto.generate_key(:ecdh, :secp521r1)
+    {Base.encode16(pub), Base.encode16(priv)}
+  end
+
   def encrypt(pubKey, data) do
     encrypt_nif(pubKey, data)
   end

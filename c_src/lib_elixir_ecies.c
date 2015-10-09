@@ -12,13 +12,16 @@
 
 static ERL_NIF_TERM init_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    (void)argc;
+    if (argc != 0) {
+        return enif_make_badarg(env);
+    }
     (void)argv;
     SSL_library_init();
     SSL_load_error_strings();
     ecies_group_init();
     return enif_make_atom(env, "ok");
 }
+
 static ERL_NIF_TERM encrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	ErlNifBinary keyBin;
@@ -55,15 +58,14 @@ static ERL_NIF_TERM encrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
 	}
 
     length = secure_total_length(out_secure);
-    
+
     if (!enif_alloc_binary(length, &result)){
 		secure_free(out_secure);
         free(keyChar);
 		return enif_make_badarg(env);
 	}
 
-    for (i=0; i < length; i++)
-        result.data[i] = out_secure[i];
+    memcpy(result.data, out_secure, length);
 
     secure_free(out_secure);
     free(keyChar);
@@ -98,8 +100,8 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
 
     strncpy(keyChar, key.data, key.size);
     keyChar[key.size] = '\0';
-    
-    if (!(output = ecies_decrypt(keyChar, (secure_t*)data.data, &length))) {
+
+    if (!(output = ecies_decrypt(keyChar, (secure_t *)data.data, &length))) {
         free(keyChar);
     	return enif_make_badarg(env);
     }
