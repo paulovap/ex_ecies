@@ -11,12 +11,12 @@ defmodule ExEcies do
     {Base.encode16(pub), Base.encode16(priv)}
   end
 
-  def encrypt(pubKey, data) do
-    encrypt_nif(pubKey, data)
+  def encrypt(data, pubKey) do
+    encrypt_nif(data, pubKey)
   end
 
-  def decrypt(privKey, data) do
-    decrypt_nif(privKey, data)
+  def decrypt(data, privKey) do
+    decrypt_nif(data, privKey)
   end
 
   defp init_nif() do

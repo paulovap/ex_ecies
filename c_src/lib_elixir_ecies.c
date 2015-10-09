@@ -36,11 +36,11 @@ static ERL_NIF_TERM encrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
         return enif_make_badarg(env);
     }
 
-    if(!enif_inspect_binary(env, argv[0], &keyBin)){
+    if(!enif_inspect_binary(env, argv[0], &data)){
         return enif_make_badarg(env);
     }
 
-    if(!enif_inspect_binary(env, argv[1], &data)){
+    if(!enif_inspect_binary(env, argv[1], &keyBin)){
         return enif_make_badarg(env);
     }
 
@@ -86,11 +86,11 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
         return enif_make_badarg(env);
     }
 
-    if (!enif_inspect_binary(env, argv[0], &key)){
+    if (!enif_inspect_binary(env, argv[0], &data)){
         return enif_make_badarg(env);
     }
 
-    if (!enif_inspect_binary(env, argv[1], &data)){
+    if (!enif_inspect_binary(env, argv[1], &key)){
         return enif_make_badarg(env);
     }
 

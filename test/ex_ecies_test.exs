@@ -5,7 +5,6 @@ defmodule ExEciesTest do
   test "the truth" do
   	text = "holy smokes! It worked!"
     {pub, priv} = ExEcies.generate_key
-  	x = ExEcies.encrypt pub, text 
-  	^text = ExEcies.decrypt priv, x
+  	^text = text |> ExEcies.encrypt(pub) |> ExEcies.decrypt(priv)
   end
 end
