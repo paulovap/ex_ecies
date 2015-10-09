@@ -2,7 +2,8 @@ defmodule ExEcies do
 	@on_load :init
 
   def init() do
-    :ok = :erlang.load_nif("./priv/lib_elixir_ecies", 0)
+    path = :filename.join(:code.priv_dir(:ex_ecies), 'lib_elixir_ecies')
+    :ok = :erlang.load_nif(path, 0)
     init_nif()
   end
 
