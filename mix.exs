@@ -45,6 +45,8 @@ defmodule Mix.Tasks.Compile.Make do
   @shortdoc "Compiles helper in c_src"
 
   def run(_) do
+    System.cmd("autoreconf", ["--install"], stderr_to_stdout: true)
+    System.cmd("sh", ["configure"], stderr_to_stdout: true)
     {result, _error_code} = System.cmd("make", [], stderr_to_stdout: true)
     Mix.shell.info result
 
@@ -56,6 +58,8 @@ defmodule Mix.Tasks.Clean.Make do
   @shortdoc "Cleans helper in c_src"
 
   def run(_) do
+    System.cmd("autoreconf", ["--install"], stderr_to_stdout: true)
+    System.cmd("sh", ["configure"], stderr_to_stdout: true)
     {result, _error_code} = System.cmd("make", ['clean'], stderr_to_stdout: true)
     Mix.shell.info result
 
