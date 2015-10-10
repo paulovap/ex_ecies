@@ -3,7 +3,7 @@ defmodule ExEcies.Mixfile do
 
   def project do
     [app: :ex_ecies,
-     version: "0.0.2",
+     version: "0.0.3",
      elixir: "~> 1.0",
      compilers: [:make, :elixir, :app],
      build_embedded: Mix.env == :prod,

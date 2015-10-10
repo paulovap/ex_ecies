@@ -3,7 +3,7 @@
 
 
 AC_PREREQ([2.68])
-AC_INIT([ex_ecies], [0.0.2], [paulovap@gmail.com])
+AC_INIT([ex_ecies], [0.0.3], [paulovictor.pinheiro@gmail.com])
 AC_CANONICAL_TARGET
 AC_CANONICAL_HOST
 AC_CANONICAL_SYSTEM
