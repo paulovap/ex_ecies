@@ -3,7 +3,7 @@ defmodule ExEcies.Mixfile do
 
   def project do
     [app: :ex_ecies,
-     version: "0.0.3",
+     version: "0.0.4",
      elixir: "~> 1.0",
      compilers: [:make, :elixir, :app],
      build_embedded: Mix.env == :prod,
@@ -45,8 +45,6 @@ defmodule Mix.Tasks.Compile.Make do
   @shortdoc "Compiles helper in c_src"
 
   def run(_) do
-    System.cmd("autoreconf", ["--install"], stderr_to_stdout: true)
-    System.cmd("sh", ["configure"], stderr_to_stdout: true)
     {result, _error_code} = System.cmd("make", [], stderr_to_stdout: true)
     Mix.shell.info result
 
@@ -58,8 +56,6 @@ defmodule Mix.Tasks.Clean.Make do
   @shortdoc "Cleans helper in c_src"
 
   def run(_) do
-    System.cmd("autoreconf", ["--install"], stderr_to_stdout: true)
-    System.cmd("sh", ["configure"], stderr_to_stdout: true)
     {result, _error_code} = System.cmd("make", ['clean'], stderr_to_stdout: true)
     Mix.shell.info result
 

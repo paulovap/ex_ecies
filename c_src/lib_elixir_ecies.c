@@ -10,24 +10,12 @@
 #include <unistd.h>
 #include <string.h>
 
-static ERL_NIF_TERM init_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-    if (argc != 0) {
-        return enif_make_badarg(env);
-    }
-    (void)argv;
-    SSL_library_init();
-    SSL_load_error_strings();
-    ecies_group_init();
-    return enif_make_atom(env, "ok");
-}
-
 static ERL_NIF_TERM encrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	ErlNifBinary keyBin;
 	ErlNifBinary data;
 	ErlNifBinary result;
-    secure_t *out_secure = NULL;
+  secure_t *out_secure = NULL;
 	char *keyChar = NULL;
     uint64_t length;
     size_t i;
@@ -120,11 +108,29 @@ static ERL_NIF_TERM decrypt_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     free(keyChar);
     return enif_make_binary(env, &result);
 }
+
+static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info) {
+  SSL_library_init();
+  SSL_load_error_strings();
+  ecies_group_init();
+  return 0;
+}
+static int upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_NIF_TERM load_info) {
+  return 0;
+}
+
+static int reload(ErlNifEnv* env, void** priv, ERL_NIF_TERM info) {
+  return 0;
+}
+
+static void unload(ErlNifEnv* env, void* priv) {
+  enif_free(priv);
+}
+
 static ErlNifFunc nif_funcs[] =
 {
-  {"init_nif", 0, init_nif, 0},
   {"encrypt_nif", 2, encrypt_nif, 0},
   {"decrypt_nif", 2, decrypt_nif, 0}
 };
 
-ERL_NIF_INIT(Elixir.ExEcies, nif_funcs,NULL,NULL,NULL,NULL)
+ERL_NIF_INIT(Elixir.ExEcies, nif_funcs, &load, &reload, &upgrade, &unload)
