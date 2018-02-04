@@ -5,8 +5,10 @@ LDFLAGS += -L/usr/lib/x86_64-linux-gnu/ -lssl -lcrypto
 ifneq ($(OS),Windows_NT)
 	CFLAGS += -fPIC
 
+# install openssl using brew
 	ifeq ($(shell uname),Darwin)
-		LDFLAGS += -dynamiclib -undefined dynamic_lookup
+		CFLAGS += -I/usr/local/opt/openssl/include
+		LDFLAGS += -L/usr/local/opt/openssl/lib -dynamiclib -undefined dynamic_lookup
 	endif
 endif
 
